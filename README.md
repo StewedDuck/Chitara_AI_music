@@ -56,3 +56,21 @@ GENERATOR_STRATEGY = 'suno'
 # Your Suno API Key
 SUNO_API_KEY = 'your-key-here'
 ```
+
+## 📂 Technical Implementation Details
+
+* Persistence: The system captures the nested streamAudioUrl from the Suno API response and stores it in the Song model, ensuring your library is permanent.
+
+* Asynchronous Polling: The frontend uses a 10-second JavaScript interval to poll the /music/api/status/ endpoint for any "DRAFT" songs until they are marked as "SUCCESS".
+
+* Direct Login: Configured with SOCIALACCOUNT_LOGIN_ON_GET = True to bypass confirmation screens and go straight to Google Account selection.
+
+## 🛠️ Built With
+
+* Django: Core Backend Framework.
+
+* Bootstrap 5: Modern, responsive UI.
+
+* Suno AI API: AI Music Engine.
+
+* Django-allauth: Authentication & Social login.
