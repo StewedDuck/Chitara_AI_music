@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chitara AI Music</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .navbar-brand { font-weight: bold; letter-spacing: 1px; }
+        .card { border: none; border-radius: 12px; }
+        .btn-group .btn { border-radius: 8px; margin: 0 2px; }
+        #library-container { max-height: 80vh; overflow-y: auto; }
+        .hero-section { min-height: 80vh; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">CHITARA AI MUSIC</a>
+            <div class="ms-auto text-light">
+                {% if user.is_authenticated %}
+                    <small class="me-3 text-secondary">Logged in as: {{ domain_user.name|default:user.email }}</small>
+                    <a href="{% url 'account_logout' %}" class="btn btn-outline-danger btn-sm">Logout</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% if user.is_authenticated %}
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <h4 class="card-title mb-4">Create New Music</h4>
+                            <form id="generateForm">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Prompt / Story</label>
+                                    <textarea id="prompt" class="form-control" rows="4" required 
+                                              placeholder="Describe the song you want Suno to create..."></textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold small text-uppercase">Genre</label>
+                                        <select id="genre" class="form-select">
+                                            <option value="Pop">Pop</option>
+                                            <option value="Rock">Rock</option>
+                                            <option value="Jazz">Jazz</option>
+                                            <option value="EDM">EDM</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold small text-uppercase">Mood</label>
+                                        <select id="mood" class="form-select">
+                                            <option value="Happy">Happy</option>
+                                            <option value="Sad">Sad</option>
+                                            <option value="Energetic">Energetic</option>
+                                            <option value="Chill">Chill</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold small text-uppercase">Voice Type</label>
+                                    <select id="voice_type" class="form-select">
+                                        <option value="Female">Female</option>
+                                        <option value="Male">Male</option>
+                                    </select>
+                                </div>
+                                <button type="submit" id="genBtn" class="btn btn-primary w-100 py-2 fw-bold shadow">
+                                    Generate Music
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h4 mb-0 fw-bold">Your Library</h2>
+                        <span class="badge bg-dark px-3 py-2 shadow-sm">{{ songs|length }} Songs</span>
+                    </div>
+
+                    <div id="library-container">
+                        <ul id="library" class="list-unstyled">
+                        {% for song in songs %}
+                            <li class="card shadow-sm mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h5 class="card-title mb-1 fw-bold">{{ song.title }}</h5>
+                                            <span class="badge {% if song.status == 'GENERATED' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                                {{ song.status }}
+                                            </span>
+                                            <small class="text-muted ms-2">{{ song.created_at|date:"M d, Y" }}</small>
+                                        </div>
+                                        <div class="btn-group shadow-sm">
+                                            <button class="btn btn-light btn-sm" onclick="renameSong({{ song.id }}, '{{ song.title|escapejs }}')">Rename</button>
+                                            <button class="btn btn-light btn-sm" onclick="shareSong({{ song.id }})">Share</button>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="deleteSong({{ song.id }})">Delete</button>
+                                        </div>
+                                    </div>
+                                    <p class="small text-muted mb-3">
+                                        Style: <strong>{{ song.parameters.genre }}</strong> | Mood: <strong>{{ song.parameters.mood }}</strong>
+                                    </p>
+                                    {% if song.audio_file %}
+                                        <div class="bg-light p-2 rounded border">
+                                            <audio controls src="{{ song.audio_file }}" class="w-100" style="height: 35px;"></audio>
+                                        </div>
+                                    {% elif song.status == 'DRAFT' %}
+                                        <div class="alert alert-info py-2 small mb-0 border-0 shadow-sm d-flex align-items-center">
+                                            <div class="spinner-border spinner-border-sm me-3 text-primary" role="status"></div>
+                                            <span>AI is composing... Polling Suno servers for your audio.</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </li>
+                        {% empty %}
+                            <div class="text-center py-5 bg-white rounded shadow-sm border">
+                                <p class="text-muted mb-0 lead">Your library is empty. Start generating!</p>
+                            </div>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="hero-section">
+                <div class="col-md-8 text-center">
+                    <div class="p-5 bg-white rounded shadow-lg border">
+                        <h1 class="display-3 fw-bold mb-3">Chitara AI Music</h1>
+                        <p class="lead text-muted mb-5 px-md-5">
+                            Harness the power of the Strategy Pattern and Suno AI to compose 
+                            original tracks instantly. Join our community of creators today.
+                        </p>
+                        
+                        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                            <a href="{% url 'google_login' %}" class="btn btn-primary btn-lg px-5 py-3 fw-bold shadow-sm">
+                                Sign in with Google
+                            </a>
+                        </div>
+                        
+                        <div class="mt-5 pt-4 border-top">
+                            <div class="row text-muted small text-uppercase fw-bold">
+                                <div class="col-4 border-end">Strategy Pattern</div>
+                                <div class="col-4 border-end">Real-time Polling</div>
+                                <div class="col-4">Suno API V5</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // --- 1. GENERATE SONG ---
+        document.getElementById('generateForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault(); 
+            const btn = document.getElementById('genBtn');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Initiating...'; 
+            btn.disabled = true;
+
+            const payload = {
+                prompt: document.getElementById('prompt').value,
+                genre: document.getElementById('genre').value,
+                mood: document.getElementById('mood').value,
+                voice_type: document.getElementById('voice_type').value
+            };
+
+            try {
+                const response = await fetch('/music/api/generate/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Suno Error: ' + (data.error || 'Failed to connect'));
+                    btn.textContent = 'Generate Music';
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                alert('System Error: Could not connect to the backend server.');
+                btn.textContent = 'Generate Music';
+                btn.disabled = false;
+            }
+        });
+
+        // --- 2. RENAME SONG ---
+        async function renameSong(songId, currentTitle) {
+            const newTitle = prompt("Enter new title for your song:", currentTitle);
+            if (!newTitle || newTitle === currentTitle) return; 
+            const response = await fetch(`/music/api/songs/${songId}/rename/`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: newTitle })
+            });
+            if (response.ok) window.location.reload(); 
+        }
+
+        // --- 3. SHARE SONG ---
+        async function shareSong(songId) {
+            const response = await fetch(`/music/api/songs/${songId}/share/`);
+            const data = await response.json();
+            if (response.ok) prompt("Share this permanent link with others:", data.share_url);
+        }
+
+        // --- 4. DELETE SONG ---
+        async function deleteSong(songId) {
+            if (!confirm("Are you sure? This will permanently delete the song from your library.")) return;
+            const response = await fetch(`/music/api/songs/${songId}/delete/`, { method: 'DELETE' });
+            if (response.ok) window.location.reload(); 
+        }
+
+        // --- 5. AUTOMATIC STATUS POLLING [cite: 1677, 1707] ---
+        async function pollPendingSongs() {
+            const listItems = document.querySelectorAll('#library li');
+            for (let li of listItems) {
+                if (li.innerHTML.includes('Status: DRAFT')) {
+                    const renameBtn = li.querySelector('button[onclick^="renameSong"]');
+                    if (renameBtn) {
+                        const songId = renameBtn.getAttribute('onclick').match(/\d+/)[0];
+                        const interval = setInterval(async () => {
+                            try {
+                                const response = await fetch(`/music/api/status/${songId}/`);
+                                const data = await response.json();
+                                if (data.status === 'SUCCESS' || data.status === 'COMPLETED') {
+                                    clearInterval(interval);
+                                    window.location.reload();
+                                } else if (data.status === 'FAILED') {
+                                    clearInterval(interval);
+                                    window.location.reload();
+                                }
+                            } catch (e) { console.error("Polling error", e); }
+                        }, 10000); // Check every 10 seconds
+                    }
+                }
+            }
+        }
+        pollPendingSongs();
+    </script>
+</body>
+</html>
