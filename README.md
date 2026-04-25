@@ -15,12 +15,7 @@ Chitara AI Music is a full-stack Django application that empowers creators to co
 ## Architecture: Strategy Pattern
 
 * The core logic follows the **Strategy Pattern**, allowing the system to switch generation engines without modifying the underlying business logic.
-* The core logic follows the **Strategy Pattern**, allowing the system to switch generation engines without modifying the underlying business logic.
 
-* **`SongGeneratorStrategy`**: The abstract base class defining the required interface.
-* **`SunoSongGeneratorStrategy`**: Communicates with the external Suno API for real music production.
-* **`MockSongGeneratorStrategy`**: Returns deterministic dummy data, preserving API credits during UI/UX testing.
-* **`StrategySelector`**: A factory that reads your local settings to determine which engine to use.
 * **`SongGeneratorStrategy`**: The abstract base class defining the required interface.
 * **`SunoSongGeneratorStrategy`**: Communicates with the external Suno API for real music production.
 * **`MockSongGeneratorStrategy`**: Returns deterministic dummy data, preserving API credits during UI/UX testing.
