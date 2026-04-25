@@ -116,7 +116,7 @@ STATIC_URL = 'static/'
 GENERATOR_STRATEGY = os.getenv('GENERATOR_STRATEGY', 'suno')
 
 # Suno API Key
-SUNO_API_KEY = os.getenv('SUNO_API_KEY', '9de563be43aa37e8222626b12399bec2')
+SUNO_API_KEY = os.getenv('SUNO_API_KEY', 'your-key')
 
 # django-allauth config
 SITE_ID = 1

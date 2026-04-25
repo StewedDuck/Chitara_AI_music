@@ -1,217 +1,55 @@
-# Chitara AI Music – Domain Layer Implementation
+# Chitara AI Music – Advanced AI Music Composer 🎸
 
-## Overview
-This project implements the core domain layer of an AI music generation system using Django.  
-The system models how users create music generation requests, how songs are produced, and how related data such as parameters, sharing, and notifications are managed.
+[cite_start]Chitara AI Music is a full-stack Django application that empowers creators to compose original music tracks using the **Suno AI API**. [cite_start]Built with a focus on clean software architecture, the project utilizes the **Strategy Design Pattern** to provide a flexible and extensible foundation for AI music generation.
 
-The focus of this implementation is on:
-- data modeling
-- relationships between entities
-- persistent storage using Django ORM
-- CRUD operations via Django Admin
+## ✨ Features
+
+* [cite_start]**AI Song Generation**: Harnesses Suno AI V5 to generate high-quality audio based on user prompts, genre, and mood[cite: 10, 16].
+* [cite_start]**Strategy Design Pattern**: Easily toggle between real AI generation and a cost-free mock mode for development.
+* [cite_start]**Real-time Polling**: An asynchronous frontend mechanism that automatically tracks generation status and reveals the player once the track is ready.
+* [cite_start]**Seamless Google Authentication**: Integrated one-click login using `django-allauth`[cite: 8, 10].
+* [cite_start]**Music Library (CRUD)**: Full control over your creations—rename, delete, and manage your history[cite: 15, 23].
+* [cite_start]**Permanent Sharing**: Generate unique, public links for any song to share with your audience[cite: 15, 22].
 
 ---
-## Setup Instructions
 
-1. Clone the repository
+## Architecture: Strategy Pattern
 
+[cite_start]The core logic follows the **Strategy Pattern**, allowing the system to switch generation engines without modifying the underlying business logic.
+
+* [cite_start]**`SongGeneratorStrategy`**: The abstract base class defining the required interface[cite: 11, 13].
+* [cite_start]**`SunoSongGeneratorStrategy`**: Communicates with the external Suno API for real music production[cite: 10, 16].
+* [cite_start]**`MockSongGeneratorStrategy`**: Returns deterministic dummy data, preserving API credits during UI/UX testing[cite: 10].
+* [cite_start]**`StrategySelector`**: A factory that reads your local settings to determine which engine to use[cite: 10].
+
+---
+
+## 🚀 Getting Started
+
+### 1. Installation
 ```bash
-git clone https://github.com/StewedDuck/Chitara_AI_music.git
+# Clone the repo
+git clone [https://github.com/StewedDuck/Chitara_AI_music.git](https://github.com/StewedDuck/Chitara_AI_music.git)
 cd Chitara_AI_music
-```
 
-2. Create and activate a virtual environment
-
-```bash
+# Setup virtual environment
 python -m venv .venv
-.venv\Scripts\activate   (Windows)
-```
+source .venv/bin/activate  # Mac/Linux
+.venv\Scripts\activate     # Windows
 
-3. Install dependencies
+# Install Django and dependencies
+pip install django requests django-allauth
 
-```bash
-pip install django
-```
-
-4. Apply migrations
-
-```bash
+2. Database Setup
+Bash
 python manage.py makemigrations
 python manage.py migrate
-```
+3. Strategy Configuration
+Edit config/settings.py to configure your generation engine:
 
-5. Create superuser
+Python
+# Choose: 'suno' or 'mock'
+GENERATOR_STRATEGY = 'suno' 
 
-```bash
-python manage.py createsuperuser
-```
-
-6. Run the development server
-
-```bash
-python manage.py runserver
-```
-
-7. Access admin panel
-
-```bash
-http://127.0.0.1:8000/admin
-```
-
-## System Design
-
-The system is structured around the following core entities:
-
-- **User**  
-  Represents a system user who can create songs and receive notifications.
-
-- **SongLibrary**  
-  Each user has one personal library that stores their songs.
-
-- **Song**  
-  Represents a generated music track, including metadata such as title, duration, and status.
-
-- **GenerationParameters**  
-  Stores input configuration for music generation (genre, mood, voice type, prompt).
-
-- **SongGenerationRequest**  
-  Represents a request submitted by a user to generate a song.
-
-- **SharedLink**  
-  A unique link associated with a song for sharing.
-
-- **Notification**  
-  Messages sent to users about system events (e.g., song generation completed).
-
----
-
-## Design Decisions
-
-### GenerationParameters as a Separate Model
-Generation parameters are stored as a separate entity instead of embedding them directly in Song.
-
-Reason:
-- allows reuse across multiple songs and requests
-- avoids data duplication
-- keeps the design modular
-
----
-
-### Song Ownership and Library Relationship
-Each Song is linked to:
-- an owner (User)
-- a library (SongLibrary)
-
-Reason:
-- owner is used for ownership and permission logic
-- library is used for organizing songs
-- system assumes consistency between owner and library
-
----
-
-### SongGenerationRequest Flow
-A SongGenerationRequest represents the process of generating a song.
-
-In this implementation:
-- requests are created manually through Django Admin
-- a completed request is linked to a resulting Song
-
-This simulates the generation workflow without integrating an actual AI service.
-
----
-
-### SharedLink Design
-Each Song is associated with exactly one SharedLink.
-
-Reason:
-- ensures a stable, unique link for sharing
-- simplifies access to shared content
-
----
-
-## Data Persistence
-
-All entities are implemented using Django ORM and stored in a relational database.
-
-Key features:
-- automatic primary keys
-- foreign key relationships
-- one-to-one and one-to-many associations
-- enforced constraints (e.g., unique email)
-
----
-
-## CRUD Operations
-
-CRUD functionality is provided through Django Admin:
-
-- Create: add new records (users, songs, etc.)
-- Read: view and list stored data
-- Update: modify existing records
-- Delete: remove records
-
-The admin interface is used as a lightweight interface for interacting with the system.
-
-## CRUD Functionality
-
-CRUD operations are supported through Django Admin for all core entities.
-
-### Create
-New records can be created through the admin interface.
-Examples:
-- Creating a User
-- Creating GenerationParameters
-- Creating a Song linked to a User and SongLibrary
-
-### Read
-Stored data can be viewed through list and detail pages in the admin interface.
-Examples:
-- Viewing all songs in the system
-- Viewing a user's library and related songs
-
-### Update
-Existing records can be modified through the admin edit interface.
-Examples:
-- Updating song title or status
-- Changing parameters associated with a song
-
-### Delete
-Records can be removed through the admin delete function.
-Examples:
-- Deleting a Notification
-- Removing a Song or GenerationRequest
-
-All operations are persisted in the database using Django ORM.
-
----
-
-## System Flow
-
-The system supports the following workflow:
-
-1. A user defines generation parameters  
-2. A generation request is created  
-3. A song is produced based on the request  
-4. The song is stored in the user’s library  
-5. A shareable link is generated  
-6. The user receives a notification  
-
----
-
-## Scope and Limitations
-
-This implementation focuses only on the domain and data layer.
-
-Not included:
-- authentication system (e.g., OAuth)
-- actual AI music generation
-- frontend user interface
-
-These components are intentionally excluded to keep the focus on core system modeling.
-
----
-
-## Conclusion
-
-The project demonstrates a structured and consistent domain model implemented using Django.  
-It supports persistent data storage, clear entity relationships, and complete CRUD functionality through the admin interface.
+# Your Suno API Key (keep this private!)
+SUNO_API_KEY = 'your-key-here'
