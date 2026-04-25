@@ -32,7 +32,7 @@ Chitara AI Music is a full-stack Django application that empowers creators to co
 ### 1. Installation
 ```bash
 # Clone the repo
-git clone [https://github.com/StewedDuck/Chitara_AI_music.git](https://github.com/StewedDuck/Chitara_AI_music.git)
+git clone [https://github.com/StewedDuck/Chitara_AI_music.git]
 cd Chitara_AI_music
 
 # Setup virtual environment
@@ -46,15 +46,10 @@ pip install -r requirements.txt
 
 ### 2. Database Setup
 ```bash
-### 2. Database Setup
-```bash
-Bash
 python manage.py makemigrations
 python manage.py migrate
 ```
-### 3. Strategy Configuration
-```bash
-```
+
 ### 3. Strategy Configuration
 ```bash
 Edit config/settings.py to configure your generation engine:
@@ -65,6 +60,4 @@ GENERATOR_STRATEGY = 'suno'
 
 # Your Suno API Key
 SUNO_API_KEY = 'your-key-here'
-```
-
 ```
