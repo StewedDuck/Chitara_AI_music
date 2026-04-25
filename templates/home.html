@@ -219,7 +219,7 @@
         async function pollPendingSongs() {
             const listItems = document.querySelectorAll('#library li');
             for (let li of listItems) {
-                if (li.innerHTML.includes('Status: DRAFT')) {
+                if (li.innerText.includes('DRAFT')) {
                     const renameBtn = li.querySelector('button[onclick^="renameSong"]');
                     if (renameBtn) {
                         const songId = renameBtn.getAttribute('onclick').match(/\d+/)[0];

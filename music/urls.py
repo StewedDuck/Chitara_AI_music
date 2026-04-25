@@ -1,3 +1,4 @@
+# music/urls.py
 from django.urls import path
 from . import views
 
@@ -11,4 +12,5 @@ urlpatterns = [
     path('api/songs/<int:song_id>/rename/', views.rename_song, name='rename_song'),
     path('api/songs/<int:song_id>/delete/', views.delete_song, name='delete_song'),
     path('api/songs/<int:song_id>/share/', views.share_song, name='share_song'),
+    path('share/<uuid:token>/', views.public_share_view, name='public_share_view'),
 ]

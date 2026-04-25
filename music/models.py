@@ -61,9 +61,9 @@ class GenerationParameters(models.Model):
 
 class Song(models.Model):
     title = models.CharField(max_length=200)
-    audio_file = models.CharField(max_length=255)
+    audio_file = models.URLField(max_length=1000, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    duration_seconds = models.PositiveIntegerField()
+    duration_seconds = models.PositiveIntegerField(null=True, blank=True)
     status = models.CharField(
         max_length=20,
         choices=SongStatus.choices,
