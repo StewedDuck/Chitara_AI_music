@@ -11,7 +11,6 @@
 * [cite_start]**Music Library (CRUD)**: Full control over your creations—rename, delete, and manage your history[cite: 15, 23].
 * [cite_start]**Permanent Sharing**: Generate unique, public links for any song to share with your audience[cite: 15, 22].
 
----
 
 ## Architecture: Strategy Pattern
 
@@ -22,7 +21,6 @@
 * [cite_start]**`MockSongGeneratorStrategy`**: Returns deterministic dummy data, preserving API credits during UI/UX testing[cite: 10].
 * [cite_start]**`StrategySelector`**: A factory that reads your local settings to determine which engine to use[cite: 10].
 
----
 
 ## 🚀 Getting Started
 
@@ -39,12 +37,15 @@ source .venv/bin/activate  # Mac/Linux
 
 # Install Django and dependencies
 pip install django requests django-allauth
-
-2. Database Setup
+```
+```bash
+### 2. Database Setup
 Bash
 python manage.py makemigrations
 python manage.py migrate
-3. Strategy Configuration
+```
+```bash
+### 3. Strategy Configuration
 Edit config/settings.py to configure your generation engine:
 
 Python
@@ -53,3 +54,4 @@ GENERATOR_STRATEGY = 'suno'
 
 # Your Suno API Key (keep this private!)
 SUNO_API_KEY = 'your-key-here'
+```
