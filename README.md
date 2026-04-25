@@ -38,14 +38,15 @@ source .venv/bin/activate  # Mac/Linux
 # Install Django and dependencies
 pip install django requests django-allauth
 ```
-```bash
+
 ### 2. Database Setup
+```bash
 Bash
 python manage.py makemigrations
 python manage.py migrate
 ```
-```bash
 ### 3. Strategy Configuration
+```bash
 Edit config/settings.py to configure your generation engine:
 
 Python
