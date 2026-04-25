@@ -1,4 +1,3 @@
-# mock_strategy.py
 from .base_strategy import SongGeneratorStrategy
 from music.models import SongGenerationRequest
 import uuid
