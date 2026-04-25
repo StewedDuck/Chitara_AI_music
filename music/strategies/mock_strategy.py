@@ -8,10 +8,12 @@ class MockSongGeneratorStrategy(SongGeneratorStrategy):
     def generate(self, request: SongGenerationRequest) -> dict:
         # Generate a fake taskId and dummy output
         fake_task_id = str(uuid.uuid4())
+        mock_title = f"[MOCK] {request.parameters.prompt[:40]}"
         
         return {
             "taskId": fake_task_id,
             "status": "SUCCESS",
             "audioUrl": "http://example.com/dummy_audio_file.mp3",
+            "title": mock_title,
             "message": f"Successfully mocked generation for prompt: {request.parameters.prompt}"
         }

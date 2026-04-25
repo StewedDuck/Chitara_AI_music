@@ -113,7 +113,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # Strategy Selection: 'mock' or 'suno'
-GENERATOR_STRATEGY = os.getenv('GENERATOR_STRATEGY', 'suno')
+GENERATOR_STRATEGY = os.getenv('GENERATOR_STRATEGY', 'mock')
 
 # Suno API Key
 SUNO_API_KEY = os.getenv('SUNO_API_KEY', 'your-key')

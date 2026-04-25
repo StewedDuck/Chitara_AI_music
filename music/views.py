@@ -41,6 +41,7 @@ def generate_song(request):
                 requester=user, parameters=params, status="PENDING"
             )
             strategy = get_song_generator_strategy()
+            print(f"\n>>> [STRATEGY SELECTOR] Active Strategy: {strategy.__class__.__name__}\n")
             result = strategy.generate(generation_request)
             if result.get("status") == "FAILED":
                 print(f"\n! SUNO API ERROR: {result.get('error')}\n")
@@ -49,8 +50,9 @@ def generate_song(request):
                 return JsonResponse({"error": f"Suno API Rejected Request: {result.get('error')}"}, status=400)
             
             song_status = "GENERATED" if result.get("status") == "SUCCESS" else "DRAFT"
+            final_title = result.get("title") or data.get('prompt', 'Untitled Song')[:50]
             song = Song.objects.create(
-                title=data.get('prompt', 'Untitled Song')[:50],
+                title=final_title,
                 audio_file=result.get("audioUrl", ""),
                 status=song_status, owner=user, library=library, parameters=params
             )
