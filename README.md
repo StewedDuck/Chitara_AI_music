@@ -4,22 +4,22 @@
 
 ## ✨ Features
 
-* [cite_start]**AI Song Generation**: Harnesses Suno AI V5 to generate high-quality audio based on user prompts, genre, and mood[cite: 10, 16].
-* [cite_start]**Strategy Design Pattern**: Easily toggle between real AI generation and a cost-free mock mode for development.
-* [cite_start]**Real-time Polling**: An asynchronous frontend mechanism that automatically tracks generation status and reveals the player once the track is ready.
-* [cite_start]**Seamless Google Authentication**: Integrated one-click login using `django-allauth`[cite: 8, 10].
-* [cite_start]**Music Library (CRUD)**: Full control over your creations—rename, delete, and manage your history[cite: 15, 23].
-* [cite_start]**Permanent Sharing**: Generate unique, public links for any song to share with your audience[cite: 15, 22].
+* **AI Song Generation**: Harnesses Suno AI V5 to generate high-quality audio based on user prompts, genre, and mood[cite: 10, 16].
+* **Strategy Design Pattern**: Easily toggle between real AI generation and a cost-free mock mode for development.
+* **Real-time Polling**: An asynchronous frontend mechanism that automatically tracks generation status and reveals the player once the track is ready.
+* **Seamless Google Authentication**: Integrated one-click login using `django-allauth`[cite: 8, 10].
+* **Music Library (CRUD)**: Full control over your creations—rename, delete, and manage your history[cite: 15, 23].
+* **Permanent Sharing**: Generate unique, public links for any song to share with your audience[cite: 15, 22].
 
 
 ## Architecture: Strategy Pattern
 
-[cite_start]The core logic follows the **Strategy Pattern**, allowing the system to switch generation engines without modifying the underlying business logic.
+* The core logic follows the **Strategy Pattern**, allowing the system to switch generation engines without modifying the underlying business logic.
 
-* [cite_start]**`SongGeneratorStrategy`**: The abstract base class defining the required interface[cite: 11, 13].
-* [cite_start]**`SunoSongGeneratorStrategy`**: Communicates with the external Suno API for real music production[cite: 10, 16].
-* [cite_start]**`MockSongGeneratorStrategy`**: Returns deterministic dummy data, preserving API credits during UI/UX testing[cite: 10].
-* [cite_start]**`StrategySelector`**: A factory that reads your local settings to determine which engine to use[cite: 10].
+* **`SongGeneratorStrategy`**: The abstract base class defining the required interface[cite: 11, 13].
+* **`SunoSongGeneratorStrategy`**: Communicates with the external Suno API for real music production[cite: 10, 16].
+* **`MockSongGeneratorStrategy`**: Returns deterministic dummy data, preserving API credits during UI/UX testing[cite: 10].
+* **`StrategySelector`**: A factory that reads your local settings to determine which engine to use[cite: 10].
 
 
 ## 🚀 Getting Started
