@@ -36,7 +36,7 @@ source .venv/bin/activate  # Mac/Linux
 .venv\Scripts\activate     # Windows
 
 # Install Django and dependencies
-pip install django requests django-allauth cryptography PyJWT
+pip install -r requirements.txt
 ```
 
 ### 2. Database Setup
